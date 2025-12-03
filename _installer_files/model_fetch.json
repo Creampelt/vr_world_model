@@ -20,7 +20,7 @@
         "url": "https://huggingface.co/lightx2v/Wan2.2-Lightning/resolve/main/Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/low_noise_model.safetensors"
     },
     {
-        "path": "text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "path": "models/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
         "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
     }
 ]
