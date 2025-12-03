@@ -1,0 +1,26 @@
+[
+    {
+        "path": "models/unet/wan2.2_i2v_high_noise_14B_Q4_K_S.gguf",
+        "url": "https://huggingface.co/bullerwins/Wan2.2-I2V-A14B-GGUF/resolve/main/wan2.2_i2v_high_noise_14B_Q4_K_S.gguf"
+    },
+    {
+        "path": "models/unet/wan2.2_i2v_low_noise_14B_Q4_K_S.gguf",
+        "url": "https://huggingface.co/bullerwins/Wan2.2-I2V-A14B-GGUF/resolve/main/wan2.2_i2v_low_noise_14B_Q4_K_S.gguf"
+    },
+    {
+        "path": "models/vae/wan_2.1_vae.safetensors",
+        "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors"
+    },
+    {
+        "path": "models/loras/high_noise_model.safetensors",
+        "url": "https://huggingface.co/lightx2v/Wan2.2-Lightning/resolve/main/Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/high_noise_model.safetensors"
+    },
+    {
+        "path": "models/loras/low_noise_model.safetensors",
+        "url": "https://huggingface.co/lightx2v/Wan2.2-Lightning/resolve/main/Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/low_noise_model.safetensors"
+    },
+    {
+        "path": "text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
+    }
+]
