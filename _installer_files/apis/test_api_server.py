@@ -362,7 +362,7 @@ def main() -> None:
     port = int(os.environ.get("FASTAPI_PORT", "8000"))
     reload_enabled = os.environ.get("FASTAPI_RELOAD", "0") == "1"
     uvicorn.run(
-        "_myapis.test_api:app",
+        app,
         host="0.0.0.0",
         port=port,
         reload=reload_enabled,
