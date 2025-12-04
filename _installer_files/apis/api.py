@@ -143,6 +143,8 @@ class WanVideoGenerator:
         if self._denoising_steps % 2 != 0 or self._denoising_steps < 2:
             raise ValueError("denoising_steps must be an even number at least 2")
 
+        self._model_cache = {}
+
     def initialize(self) -> None:
         if self._nodes_ready:
             return
@@ -181,6 +183,11 @@ class WanVideoGenerator:
                 negative_prompts,
             )
 
+    def _cached(self, key: str, builder: Any) -> Any:
+        if key not in self._model_cache:
+            self._model_cache[key] = builder()
+        return self._model_cache[key]
+
     def _build_lora_model(
         self,
         unet_name: str,
@@ -215,13 +222,16 @@ class WanVideoGenerator:
         with torch.inference_mode():
             # load clip and encode prompts
             print("Loading CLIP model")
-            clip_model = get_value_at_index(
-                self.cliploader.load_clip(
-                    clip_name=CLIP_MODEL_NAME,
-                    type="wan",
-                    device="cpu",
+            clip_model = self._cached(
+                "clip_model",
+                lambda: get_value_at_index(
+                    self.cliploader.load_clip(
+                        clip_name=CLIP_MODEL_NAME,
+                        type="wan",
+                        device="cpu",
+                    ),
+                    0,
                 ),
-                0,
             )
             positive_conditioning = []
             for prompt in tqdm(positive_prompts, desc="Encoding Positive Prompts"):
@@ -255,9 +265,12 @@ class WanVideoGenerator:
 
             # load the vae
             print("Loading VAE model")
-            vae = get_value_at_index(
-                self.vaeloader.load_vae(vae_name=VAE_MODEL_NAME),
-                0,
+            vae = self._cached(
+                "vae_model",
+                lambda: get_value_at_index(
+                    self.vaeloader.load_vae(vae_name=VAE_MODEL_NAME),
+                    0,
+                ),
             )
 
             # setup wan image to video
@@ -277,13 +290,16 @@ class WanVideoGenerator:
                 wanimagetovideo_results.append(result)
 
             # high noise sampling
-            high_noise_model = get_value_at_index(
-                self._build_lora_model(
-                    HIGH_NOISE_UNET,
-                    HIGH_NOISE_LORA,
-                    3.0,
+            high_noise_model = self._cached(
+                "high_noise_model",
+                lambda: get_value_at_index(
+                    self._build_lora_model(
+                        HIGH_NOISE_UNET,
+                        HIGH_NOISE_LORA,
+                        3.0,
+                    ),
+                    0,
                 ),
-                0,
             )
             high_noise_sampling = self.modelsampling.patch(
                 shift=8.0,
@@ -310,13 +326,16 @@ class WanVideoGenerator:
                 high_noise_results.append(ksampler_high)
 
             # low noise sampling
-            low_noise_model = get_value_at_index(
-                self._build_lora_model(
-                    LOW_NOISE_UNET,
-                    LOW_NOISE_LORA,
-                    1.5,
+            low_noise_model = self._cached(
+                "low_noise_model",
+                lambda: get_value_at_index(
+                    self._build_lora_model(
+                        LOW_NOISE_UNET,
+                        LOW_NOISE_LORA,
+                        1.5,
+                    ),
+                    0,
                 ),
-                0,
             )
             low_noise_sampling = self.modelsampling.patch(
                 shift=8.0,
@@ -381,7 +400,9 @@ class WanVideoGenerator:
                         "output_path": preview.get("fullpath")
                         if preview
                         else (output_files[-1] if output_files else None),
-                        "output_subfolder": preview.get("subfolder") if preview else None,
+                        "output_subfolder": preview.get("subfolder")
+                        if preview
+                        else None,
                         "output_filename": preview.get("filename") if preview else None,
                         "output_files": output_files,
                     }
